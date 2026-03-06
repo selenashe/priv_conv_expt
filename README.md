@@ -31,3 +31,5 @@ Output is in `dist/`. For production build with data submission URL (e.g. in CI)
 ```bash
 VITE_DATA_SUBMIT_URL='https://script.google.com/macros/s/.../exec' npm run build
 ```
+
+version 1.0

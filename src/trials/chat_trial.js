@@ -2,11 +2,16 @@
  * Chat trial: realistic chatbot UI.
  * 1) Stream chat context message-by-message with typing delay; "dot (AI)" and "You" labels.
  * 2) Show task prompt and AI draft; user chooses [Submit as-is] or [Revise].
- * 3) Submit as-is: submit draft. Revise: 5s "Preparing editable draft..." then editable box; Back returns to preview.
+ * 3) Submit as-is: submit draft. Revise: immediate editable box; Back returns to preview.
  * Only one final submission. Log choice (always 'ai'), final_subject, final_body, edited_ai_draft, edit_char_delta, etc.
  */
 
 import { ParameterType } from 'jspsych';
+
+/** Display time for each chat message scales with length. Time (ms) = this coefficient × word count; min is CHAT_MESSAGE_DISPLAY_MIN_MS. */
+const CHAT_MESSAGE_DISPLAY_MS_PER_WORD = 80;
+/** Minimum time (ms) to show a message before advancing to the next. */
+const CHAT_MESSAGE_DISPLAY_MIN_MS = 400;
 
 const info = {
   name: 'chat_trial',
@@ -211,11 +216,13 @@ class ChatTrialPlugin {
       const msg = chatContext[index];
       showTyping(true);
       const delay = msg.delay_ms != null ? msg.delay_ms : 500 + Math.floor(Math.random() * 400);
+      const wordCount = (msg.text || '').trim().split(/\s+/).filter(Boolean).length;
+      const displayMs = Math.max(CHAT_MESSAGE_DISPLAY_MIN_MS, CHAT_MESSAGE_DISPLAY_MS_PER_WORD * wordCount);
       this.jsPsych.pluginAPI.setTimeout(() => {
         showTyping(false);
         addMessage(msg.speaker, msg.text);
         scrollToBottom();
-        this.jsPsych.pluginAPI.setTimeout(() => streamMessages(index + 1), 300);
+        this.jsPsych.pluginAPI.setTimeout(() => streamMessages(index + 1), displayMs);
       }, delay);
     };
 
@@ -237,20 +244,15 @@ class ChatTrialPlugin {
       });
     });
 
-    // Revise → 5s loading then editable
+    // Revise → show editable immediately
     aiRevise.addEventListener('click', () => {
       aiDraftPreviewWrap.classList.add('hidden');
-      aiDraftLoading.classList.remove('hidden');
-      aiDraftEditWrap.classList.add('hidden');
-      this.jsPsych.pluginAPI.setTimeout(() => {
-        aiDraftLoading.classList.add('hidden');
-        aiDraftEditWrap.classList.remove('hidden');
-        aiDraftSubject.value = aiDraft.subject || '';
-        aiDraftBody.value = aiDraft.body || '';
-        aiRevised = true;
-        updateAiDraftCharCount();
-        aiDraftBody.focus();
-      }, 5000);
+      aiDraftEditWrap.classList.remove('hidden');
+      aiDraftSubject.value = aiDraft.subject || '';
+      aiDraftBody.value = aiDraft.body || '';
+      aiRevised = true;
+      updateAiDraftCharCount();
+      aiDraftBody.focus();
     });
 
     const aiDraftError = container.querySelector('#ai-draft-error');

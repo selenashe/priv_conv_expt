@@ -21,12 +21,12 @@ const info = {
     /** Left label for the scale */
     left_label: {
       type: ParameterType.STRING,
-      default: 'Strongly disagree',
+      default: 'Not acceptable',
     },
     /** Right label for the scale */
     right_label: {
       type: ParameterType.STRING,
-      default: 'Strongly agree',
+      default: 'Very acceptable',
     },
     min: {
       type: ParameterType.INT,

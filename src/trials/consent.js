@@ -38,7 +38,7 @@ const info = {
       (such as your full name, address, phone number, or specific identifying details) in any written responses.</p>
     
       <p>If you have any questions, concerns, or complaints about this research, its procedures, risks, or benefits, 
-      please contact the Protocol Director Selena She  at <strong>jshe@stanford.edu</strong>.</p>
+      please contact the Protocol Director Robert Hawkins at <strong>rxdh@stanford.edu</strong>.</p>
     
       <p>If you are not satisfied with how this study is being conducted or have questions about your rights 
       as a participant, you may contact the Stanford Institutional Review Board (IRB) at 

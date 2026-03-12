@@ -33,8 +33,8 @@ function shuffleArray(arr) {
 // profile_key used for score aggregation: medical_score, legal_score, emotional_score, recipient_trust_score.
 // ---------------------------------------------------------------------------
 const PROFILE_QUESTIONS = [
-  { profile_key: 'medical', question: 'How acceptable is it for you to share that you had a medical appointment with your course instructor to explain a scheduling conflict?' },
-  { profile_key: 'medical', question: 'How acceptable is it for you to share the type of medical procedure you had with your workplace supervisor to coordinate scheduling?' },
+  { profile_key: 'medical', question: 'How acceptable is it to tell your course instructor that you had a medical appointment to explain a scheduling conflict?' },
+  { profile_key: 'medical', question: 'How acceptable is it to tell your workplace supervisor the type of medical procedure you had to coordinate scheduling?' },
   // { profile_key: 'legal', question: 'I am comfortable sharing personal information in legal or official contexts when required.' },
   // { profile_key: 'legal', question: 'I am comfortable disclosing relevant personal details to authorities or legal representatives.' },
   // { profile_key: 'emotional', question: 'I am comfortable sharing emotional or mental health related information with people I trust.' },
@@ -48,21 +48,46 @@ const PROFILE_QUESTIONS = [
 // Exit survey questions (1–7 Likert). TODO: Replace with your actual questions.
 // ---------------------------------------------------------------------------
 const EXIT_SURVEY_QUESTIONS = [
+  // {
+  //   question_key: 'norm_acceptability',
+  //   question: 'How appropriate do you think it was to share this information with this recipient in this situation?',
+  //   left_label: 'Very inappropriate',
+  //   right_label: 'Very appropriate',
+  // },
+  // {
+  //   question_key: 'would_send_real',
+  //   question: 'If this situation happened in real life, how likely would you be to send exactly the same message you submitted here?',
+  //   left_label: 'Very unlikely',
+  //   right_label: 'Very likely',
+  // },
   {
-    question_key: 'norm_acceptability',
-    question: 'How appropriate do you think it was to share this information with this recipient in this situation?'
+    question_key: 'noticed_personal_info',
+    question: 'Did you notice that your message included personal information about you?',
+    options: [
+      'Yes, while editing the message',
+      'Yes, but only now after reviewing this final message',
+      'No, I did not notice that my message included personal information'
+    ]
   },
   {
-    question_key: 'comfort_recipient',
-    question: 'How comfortable would you be if the intended recipient actually read the message you submitted?'
+    question_key: 'intentionality_personal_info',
+    question: 'If your message included personal information, how intentional was that decision?',
+    options: [
+      'I intentionally chose to include it',
+      'I noticed it but chose not to include it',
+      'I did not notice that it was included'
+    ]
   },
   {
-    question_key: 'would_send_real',
-    question: 'If this situation happened in real life, how likely would you be to send exactly the same message you submitted here?'
-  },
-  {
-    question_key: 'ai_influence',
-    question: 'To what extent did the AI-generated draft influence how much information you decided to include in your final message?'
+    question_key: 'willingness_extra_details',
+    question: 'How willing were you to include extra personal details in exchange for the convenience of using the AI draft?',
+    options: [
+      'Very unwilling',
+      'Somewhat unwilling',
+      'Neutral',
+      'Somewhat willing',
+      'Very willing'
+    ]
   }
 ];
 

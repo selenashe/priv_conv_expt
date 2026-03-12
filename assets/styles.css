@@ -280,6 +280,45 @@ body {
   outline-offset: 2px;
 }
 
+/* Exit survey: multiple-choice (reflection) options — stacked vertically */
+.recall-survey-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recall-survey-choice-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.recall-survey-choice-option:hover {
+  border-color: var(--primary);
+  background: var(--bubble-user-bg);
+}
+
+.recall-survey-choice-option input:checked + span,
+.recall-survey-choice-option:has(input:checked) {
+  font-weight: 600;
+}
+
+.recall-survey-choice-option input {
+  margin: 2px 0 0;
+  flex-shrink: 0;
+}
+
+.recall-survey-choice-option input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 /* ----- Chat trial (realistic chat UI) ----- */
 .chat-trial-container {
   display: flex;
@@ -524,11 +563,15 @@ body {
   margin-top: 8px;
 }
 
-/* Recall + survey on one page (scrollable) */
+/* Recall + survey on one page (scrollable); disable text selection/copy */
 .recall-survey-page {
   overflow-y: auto;
   max-height: 100vh;
   padding-bottom: 24px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .recall-survey-questions {

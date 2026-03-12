@@ -99,20 +99,37 @@ class RecallSurveyBlockPlugin {
     const recallHtml = buildRecallHtml(trial);
     const surveyBlocks = questions.map((q, idx) => {
       const name = 'recall_survey_' + trial.recalled_trial_id + '_' + idx + '_' + Math.random().toString(36).slice(2, 9);
-      const labels = options.map(
-        (v) =>
-          `<label class="likert-option"><input type="radio" name="${name}" value="${v}" /> <span>${v}</span></label>`
-      );
-      return `
-        <div class="exit-survey-block recall-survey-block-item" data-question-key="${escapeHtml(q.question_key)}">
-          <p class="exit-survey-question">${escapeHtml(q.question)}</p>
+      const isChoice = Array.isArray(q.options) && q.options.length > 0;
+      let blockContent;
+      if (isChoice) {
+        const choiceLabels = q.options.map(
+          (opt) =>
+            `<label class="recall-survey-choice-option"><input type="radio" name="${name}" value="${escapeHtml(opt)}" /> <span>${escapeHtml(opt)}</span></label>`
+        );
+        blockContent = `
+          <div class="recall-survey-choices" role="radiogroup" aria-label="${(q.question || '').replace(/"/g, '&quot;')}">
+            ${choiceLabels.join('')}
+          </div>`;
+      } else {
+        const qLeft = q.left_label != null ? q.left_label : leftLabel;
+        const qRight = q.right_label != null ? q.right_label : rightLabel;
+        const labels = options.map(
+          (v) =>
+            `<label class="likert-option"><input type="radio" name="${name}" value="${v}" /> <span>${v}</span></label>`
+        );
+        blockContent = `
           <div class="likert-labels">
-            <span class="likert-left">${escapeHtml(leftLabel)}</span>
+            <span class="likert-left">${escapeHtml(qLeft)}</span>
             <div class="likert-options" role="radiogroup" aria-label="${(q.question || '').replace(/"/g, '&quot;')}">
               ${labels.join('')}
             </div>
-            <span class="likert-right">${escapeHtml(rightLabel)}</span>
-          </div>
+            <span class="likert-right">${escapeHtml(qRight)}</span>
+          </div>`;
+      }
+      return `
+        <div class="exit-survey-block recall-survey-block-item" data-question-key="${escapeHtml(q.question_key)}" data-question-type="${isChoice ? 'choice' : 'likert'}">
+          <p class="exit-survey-question">${escapeHtml(q.question)}</p>
+          ${blockContent}
         </div>
       `;
     });
@@ -136,10 +153,13 @@ class RecallSurveyBlockPlugin {
     const errorEl = display_element.querySelector('#recall-survey-block-error');
 
     continueBtn.addEventListener('click', () => {
-      const responses = questions.map((q, idx) => {
+      const responses = questions.map((q) => {
         const block = display_element.querySelector(`.recall-survey-block-item[data-question-key="${q.question_key}"]`);
         const checked = block ? block.querySelector('input[type="radio"]:checked') : null;
-        return { question_key: q.question_key, question: q.question, survey_response: checked ? parseInt(checked.value, 10) : null };
+        const isChoice = Array.isArray(q.options) && q.options.length > 0;
+        const raw = checked ? checked.value : null;
+        const survey_response = isChoice ? raw : (raw != null ? parseInt(raw, 10) : null);
+        return { question_key: q.question_key, question: q.question, survey_response };
       });
       const missing = responses.filter((r) => r.survey_response == null);
       if (missing.length > 0) {

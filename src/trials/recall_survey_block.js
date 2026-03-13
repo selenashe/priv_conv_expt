@@ -17,6 +17,7 @@ const info = {
     choice: { type: ParameterType.STRING, default: '' },
     violation_level: { type: ParameterType.STRING, default: '' },
     recalled_trial_id: { type: ParameterType.INT, default: null },
+    edited_ai_draft: { type: ParameterType.BOOL, default: false },
     questions: { type: ParameterType.COMPLEX, default: [] },
     left_label: { type: ParameterType.STRING, default: 'Strongly disagree' },
     right_label: { type: ParameterType.STRING, default: 'Strongly agree' },
@@ -66,6 +67,9 @@ function buildRecallHtml(trial) {
     finalSubject && finalBody
       ? `<p><strong>Subject:</strong> ${escapeHtml(finalSubject)}</p><div class="recall-submission-body">${escapeHtml(finalBody).replace(/\n/g, '<br>')}</div>`
       : `<div class="recall-submission-body">${escapeHtml(finalBody).replace(/\n/g, '<br>')}</div>`;
+  const choseText = trial.edited_ai_draft
+    ? 'You chose to revise the draft.'
+    : 'You chose to submit the draft as-is.';
   return `
     <div class="recall-trial-container">
       <h2 class="recall-title">Recall this task and your submission</h2>
@@ -76,6 +80,7 @@ function buildRecallHtml(trial) {
       <div class="recall-submission">
         <h3 class="recall-submission-title">Your submission</h3>
         <div class="recall-submission-content">${submissionHtml}</div>
+        <p class="recall-choice-summary">${escapeHtml(choseText)}</p>
       </div>
     </div>
   `;
@@ -138,7 +143,7 @@ class RecallSurveyBlockPlugin {
       <div class="recall-survey-page">
         ${recallHtml}
         <div class="recall-survey-questions">
-          <h3 class="recall-survey-questions-title">Please answer the following questions about this task.</h3>
+          <h3 class="recall-survey-questions-title">From a scale of 1 to 7, how much do you agree with the following statements?</h3>
           ${surveyBlocks.join('')}
         </div>
         <div class="recall-survey-open-ended">

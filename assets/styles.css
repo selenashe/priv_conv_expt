@@ -574,11 +574,19 @@ body {
   margin: 0 0 8px;
   font-size: 0.95rem;
   font-weight: 600;
+  color: #c00;
 }
 
 .recall-submission-content {
   font-size: 15px;
   line-height: 1.5;
+}
+
+.recall-choice-summary {
+  margin: 12px 0 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #c00;
 }
 
 .recall-submission-body {

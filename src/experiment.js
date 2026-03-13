@@ -57,51 +57,32 @@ const PROFILE_QUESTIONS = [
 ];
 
 // ---------------------------------------------------------------------------
-// Exit survey questions (1–7 Likert). TODO: Replace with your actual questions.
+// Exit survey questions: 3 Likert (1–7). Q2 wording depends on whether they submitted as-is or revised.
 // ---------------------------------------------------------------------------
-const EXIT_SURVEY_QUESTIONS = [
-  // {
-  //   question_key: 'norm_acceptability',
-  //   question: 'How appropriate do you think it was to share this information with this recipient in this situation?',
-  //   left_label: 'Very inappropriate',
-  //   right_label: 'Very appropriate',
-  // },
-  // {
-  //   question_key: 'would_send_real',
-  //   question: 'If this situation happened in real life, how likely would you be to send exactly the same message you submitted here?',
-  //   left_label: 'Very unlikely',
-  //   right_label: 'Very likely',
-  // },
-  {
-    question_key: 'noticed_personal_info',
-    question: 'Did you notice that your message included personal information about you?',
-    options: [
-      'Yes, while editing the message',
-      'Yes, but only now after reviewing this final message',
-      'No, I did not notice that my message included personal information'
-    ]
-  },
-  {
-    question_key: 'intentionality_personal_info',
-    question: 'If your message included personal information, how intentional was that decision?',
-    options: [
-      'I intentionally chose to include it',
-      'I noticed it but chose not to include it',
-      'I did not notice that it was included'
-    ]
-  },
-  {
-    question_key: 'willingness_extra_details',
-    question: 'How willing were you to include extra personal details in exchange for the convenience of using the AI draft?',
-    options: [
-      'Very unwilling',
-      'Somewhat unwilling',
-      'Neutral',
-      'Somewhat willing',
-      'Very willing'
-    ]
-  }
-];
+function buildExitSurveyQuestionsForBlock(editedAiDraft) {
+  return [
+    {
+      question_key: 'concerned_personal_info',
+      question: 'I was concerned that this message contained more personal information than needed.',
+      left_label: 'Strongly disagree',
+      right_label: 'Strongly agree',
+    },
+    {
+      question_key: 'chose_despite_or_because',
+      question: editedAiDraft
+        ? "I chose to revise the draft because it contained more personal information than was needed."
+        : "I chose the AI draft despite it containing more personal information than was needed.",
+      left_label: 'Strongly disagree',
+      right_label: 'Strongly agree',
+    },
+    {
+      question_key: 'willing_extra_details',
+      question: 'In cases like this, I am willing to include extra personal details in exchange for the convenience of using the AI draft.',
+      left_label: 'Strongly disagree',
+      right_label: 'Strongly agree',
+    },
+  ];
+}
 
 // ---------------------------------------------------------------------------
 // Counterbalanced orders A–F: which variant (a,b,c) of each scenario family is shown, and in what order.
@@ -184,14 +165,14 @@ const studyDescription = {
       <p><strong>Part 1 — Short questionnaire (about 5 minutes)</strong></p>
       <p>You will answer a few questions about your comfort sharing personal information in different contexts and with different types of recipients. There are no right or wrong answers; we are simply interested in your preferences.</p>
       <p><strong>Part 2 — Message tasks (about 10 minutes)</strong></p>
-      <p>You will see a series of hypothetical communication scenarios. In each one, you will read a short chat and a writing prompt, then either <strong>write the message yourself</strong> or <strong>use an AI-generated draft</strong> and edit it if you like.</p>
+      <p>You will see a series of hypothetical communication scenarios. In each one, you will read a short chat and a writing prompt, then either <strong>directly submit an AI-generated draft</strong> or <strong>edit that draft before submitting</strong>.</p>
       <div class="info-page-highlight">
         <p>We would like you to treat each scenario as if it were real: please respond as you would in everyday life. Your choices and wording help us understand how people approach these situations. Some scenarios touch on personal topics (e.g. health or legal matters), but you will not be asked to share any real personal details about yourself.</p>
       </div>
       <p>During the message tasks, you will see a few <strong>attention checks</strong>. They are designed to be very obvious—we use them only to confirm that participants are engaged. If you are reading and following the instructions, we are confident you will pass them without any trouble.</p>
       <p><strong>Part 3 — Reflection (about 5 minutes)</strong></p>
       <p>At the end, we will show you some of the tasks you just completed and ask you to reflect on them. For each, you will briefly see the context and your submitted message, then answer a few short questions about that scenario.</p>
-      <p>Total time is typically <strong>about 20–30 minutes</strong>. Click Continue when you are ready to begin Part 1.</p>
+      <p>Total time is typically <strong>about 10-15 minutes</strong>. Click Continue when you are ready to begin Part 1.</p>
     </div>
   `,
   choices: ['Continue'],
@@ -219,8 +200,8 @@ const infoBeforeMainTrials = {
   stimulus: `
     <div class="info-page">
       <h2>Message tasks</h2>
-      <p>You will now complete a series of tasks. In each one, you will see a simulated chat and a writing prompt. You can either <strong>write the message yourself</strong> or <strong>use an AI-generated draft</strong> (and edit it if you like). You will submit one final message per task.</p>
-      <p><strong>Estimated time: about 10 minutes.</strong></p>
+      <p>You will now complete a series of tasks. In each one, you will see a simulated chat and a writing prompt. You can then either <strong>directly submit an AI-generated draft</strong> or <strong>edit that draft before submitting</strong>. You will submit one final message per task.</p>
+      <p><strong>Estimated time: about 5 minutes.</strong></p>
       <p>Click Continue when you are ready.</p>
     </div>
   `,
@@ -289,7 +270,8 @@ function buildExitSurveyCallback() {
           choice: trialData.choice ?? '',
           violation_level: trialData.violation_level ?? '',
           recalled_trial_id: trialData.trial_index ?? null,
-          questions: EXIT_SURVEY_QUESTIONS,
+          edited_ai_draft: trialData.edited_ai_draft === true,
+          questions: buildExitSurveyQuestionsForBlock(trialData.edited_ai_draft === true),
         });
       });
     }

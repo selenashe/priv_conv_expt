@@ -61,7 +61,7 @@ class ChatTrialPlugin {
       !!(composeTemplate.subject && composeTemplate.subject.trim()) ||
       !!(aiDraft.subject && aiDraft.subject.trim());
     const isAttentionCheck = trial.attention_check === true;
-    const minChars = isAttentionCheck ? 0 : (isEmailStyle ? 200 : 50);
+    const minChars = 0;
 
     const trialNumber = trial.trial_number ?? 1;
     const totalTrials = trial.total_trials ?? 1;

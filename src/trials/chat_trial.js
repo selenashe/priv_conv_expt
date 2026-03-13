@@ -172,11 +172,19 @@ class ChatTrialPlugin {
 
     let finished = false;
     let aiRevised = false;
+    const chatTrialEvents = {
+      task_and_draft_shown_at: null,
+      submit_as_is_clicked_at: null,
+      revise_clicked_at: null,
+      back_clicked_at: [],
+      draft_submit_clicked_at: null,
+    };
 
     const finishTrial = (data) => {
       if (finished) return;
       finished = true;
       const trialEnd = performance.now();
+      const trialEndedAt = Date.now();
       this.jsPsych.finishTrial({
         trial_type: 'chat_trial',
         scenario_id: trial.scenario_id,
@@ -193,12 +201,19 @@ class ChatTrialPlugin {
         rt: Math.round(trialEnd - trialStart),
         trial_start: trialStart,
         trial_end: trialEnd,
+        task_and_draft_shown_at: chatTrialEvents.task_and_draft_shown_at,
+        submit_as_is_clicked_at: chatTrialEvents.submit_as_is_clicked_at,
+        revise_clicked_at: chatTrialEvents.revise_clicked_at,
+        back_clicked_at: [...chatTrialEvents.back_clicked_at],
+        draft_submit_clicked_at: chatTrialEvents.draft_submit_clicked_at,
+        trial_ended_at: trialEndedAt,
         ...data,
       });
     };
 
     const streamMessages = (index) => {
       if (index >= chatContext.length) {
+        chatTrialEvents.task_and_draft_shown_at = Date.now();
         showTyping(false);
         taskPrompt.textContent = trial.task;
         taskPrompt.classList.remove('hidden');
@@ -230,11 +245,13 @@ class ChatTrialPlugin {
 
     // Back from revise view → return to draft preview
     aiDraftBack.addEventListener('click', () => {
+      chatTrialEvents.back_clicked_at.push(Date.now());
       showPreviewFromEdit();
     });
 
     // Submit as-is
     aiSubmitAsIs.addEventListener('click', () => {
+      chatTrialEvents.submit_as_is_clicked_at = Date.now();
       finishTrial({
         choice: 'ai',
         final_subject: (aiDraft.subject || '').trim(),
@@ -246,6 +263,7 @@ class ChatTrialPlugin {
 
     // Revise → show editable immediately
     aiRevise.addEventListener('click', () => {
+      chatTrialEvents.revise_clicked_at = Date.now();
       aiDraftPreviewWrap.classList.add('hidden');
       aiDraftEditWrap.classList.remove('hidden');
       aiDraftSubject.value = aiDraft.subject || '';
@@ -287,6 +305,7 @@ class ChatTrialPlugin {
       const originalBody = (aiDraft.body || '').trim();
       const edited = body !== originalBody;
       const editCharDelta = edited ? body.length - originalBody.length : 0;
+      chatTrialEvents.draft_submit_clicked_at = Date.now();
       finishTrial({
         choice: 'ai',
         final_subject: (aiDraftSubject.value || '').trim(),

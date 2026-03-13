@@ -21,8 +21,7 @@ function doPost(e) {
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
         'Timestamp', 'participant_id', 'condition', 'consent_given',
-        'medical_score', 'legal_score', 'emotional_score', 'recipient_trust_score',
-        'chat_trials_json', 'exit_survey_json', 'raw_json'
+        'profile_trials_json', 'chat_trials_json', 'exit_survey_json', 'exit_survey_blocks_json', 'raw_json'
       ]);
     }
     var row = [
@@ -30,12 +29,10 @@ function doPost(e) {
       data.participant_id || '',
       data.condition || '',
       data.consent && data.consent.consent_given !== undefined ? data.consent.consent_given : '',
-      data.profile_scores && data.profile_scores.medical_score !== undefined ? data.profile_scores.medical_score : '',
-      data.profile_scores && data.profile_scores.legal_score !== undefined ? data.profile_scores.legal_score : '',
-      data.profile_scores && data.profile_scores.emotional_score !== undefined ? data.profile_scores.emotional_score : '',
-      data.profile_scores && data.profile_scores.recipient_trust_score !== undefined ? data.profile_scores.recipient_trust_score : '',
+      JSON.stringify(data.profile_trials || []),
       JSON.stringify(data.chat_trials || []),
       JSON.stringify(data.exit_survey || []),
+      JSON.stringify(data.exit_survey_blocks || []),
       dataStr
     ];
     sheet.appendRow(row);

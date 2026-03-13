@@ -45,15 +45,13 @@ The script appends one row per completion with these columns:
 | B – participant_id | Prolific ID or generated ID |
 | C – condition | A or B |
 | D – consent_given | true/false |
-| E – medical_score | Mean of medical profile items |
-| F – legal_score | Mean of legal profile items |
-| G – emotional_score | Mean of emotional profile items |
-| H – recipient_trust_score | Mean of recipient trust items |
-| I – chat_trials_json | Full JSON array of chat trials |
-| J – exit_survey_json | Full JSON array of exit survey responses |
-| K – raw_json | Full export object (backup) |
+| E – profile_trials_json | Full JSON array of profiling questions (each: profile_key, question, response, responded_at, rt) |
+| F – chat_trials_json | Full JSON array of main trials (choice, final_subject, final_body, all event timestamps, etc.) |
+| G – exit_survey_json | Full JSON array of exit survey responses (flat list) |
+| H – exit_survey_blocks_json | Full JSON array of exit survey blocks (each: recalled_trial_id, block_shown_at, block_completed_at, survey_responses) |
+| I – raw_json | Full export object (backup) |
 
-You can add a header row in row 1 of your sheet (e.g. "Timestamp", "participant_id", ...); the script appends data starting at the next empty row.
+The script writes the header row automatically when the sheet is empty. Each JSON column contains the full selections and timestamps for that stage.
 
 ## Troubleshooting
 

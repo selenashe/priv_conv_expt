@@ -47,33 +47,21 @@ export function buildExportData(jsPsych, customData = {}) {
   const exitTrials = allTrials.filter((t) => t.trial_type === 'exit_survey_likert');
   const recallSurveyBlocks = allTrials.filter((t) => t.trial_type === 'recall_survey_block');
 
-  const medicalItems = profileTrials.filter((t) => t.profile_key === 'medical');
-  const legalItems = profileTrials.filter((t) => t.profile_key === 'legal');
-  const emotionalItems = profileTrials.filter((t) => t.profile_key === 'emotional');
-  const recipientItems = profileTrials.filter((t) => t.profile_key === 'recipient_trust');
-
-  const mean = (arr) =>
-    arr.length ? arr.reduce((s, t) => s + (t.response ?? 0), 0) / arr.length : null;
-
   const data = {
     participant_id: participantId,
     condition,
     consent: {
       age: consent.age,
       gender: consent.gender,
-      prolific_id: consent.prolific_id,
+      prolific_id: consent.prolific_id ?? consent.participant_id,
       consent_given: consent.consent_given,
-    },
-    profile_scores: {
-      medical_score: mean(medicalItems.map((t) => t.response)),
-      legal_score: mean(legalItems.map((t) => t.response)),
-      emotional_score: mean(emotionalItems.map((t) => t.response)),
-      recipient_trust_score: mean(recipientItems.map((t) => t.response)),
+      consent_submitted_at: consent.consent_submitted_at ?? null,
     },
     profile_trials: profileTrials.map((t) => ({
       profile_key: t.profile_key,
       question: t.question,
       response: t.response,
+      responded_at: t.responded_at ?? null,
       rt: t.rt,
     })),
     chat_trials: chatTrials.map((t) => ({
@@ -92,6 +80,20 @@ export function buildExportData(jsPsych, customData = {}) {
       rt: t.rt,
       trial_start: t.trial_start,
       trial_end: t.trial_end,
+      task_and_draft_shown_at: t.task_and_draft_shown_at ?? null,
+      submit_as_is_clicked_at: t.submit_as_is_clicked_at ?? null,
+      revise_clicked_at: t.revise_clicked_at ?? null,
+      back_clicked_at: t.back_clicked_at ?? [],
+      draft_submit_clicked_at: t.draft_submit_clicked_at ?? null,
+      trial_ended_at: t.trial_ended_at ?? null,
+    })),
+    exit_survey_blocks: recallSurveyBlocks.map((t) => ({
+      recalled_trial_id: t.recalled_trial_id ?? null,
+      scenario_id: t.scenario_id ?? '',
+      domain: t.domain ?? '',
+      block_shown_at: t.block_shown_at ?? null,
+      block_completed_at: t.block_completed_at ?? null,
+      survey_responses: t.survey_responses ?? [],
     })),
     exit_survey: [
       ...exitTrials.map((t) => ({
@@ -139,12 +141,11 @@ export function dataToCsvRows(data) {
     'gender',
     'prolific_id',
     'consent_given',
-    'medical_score',
-    'legal_score',
-    'emotional_score',
-    'recipient_trust_score',
+    'consent_submitted_at',
+    'profile_trials_json',
     'chat_trials_json',
     'exit_survey_json',
+    'exit_survey_blocks_json',
   ];
   rows.push(header.join(','));
 
@@ -162,12 +163,11 @@ export function dataToCsvRows(data) {
     data.consent?.gender ?? '',
     data.consent?.prolific_id ?? '',
     data.consent?.consent_given ?? '',
-    data.profile_scores?.medical_score ?? '',
-    data.profile_scores?.legal_score ?? '',
-    data.profile_scores?.emotional_score ?? '',
-    data.profile_scores?.recipient_trust_score ?? '',
+    data.consent?.consent_submitted_at ?? '',
+    JSON.stringify(data.profile_trials || []),
     JSON.stringify(data.chat_trials || []),
     JSON.stringify(data.exit_survey || []),
+    JSON.stringify(data.exit_survey_blocks || []),
   ];
   rows.push(r.map(escape).join(','));
   return rows.join('\n');

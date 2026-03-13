@@ -116,24 +116,25 @@ class ConsentPlugin {
         errorEl.textContent = 'Please enter your Prolific ID.';
         return;
       }
+      const consentSubmittedAt = Date.now();
+      const rt = Math.round(performance.now() - t0);
       if (!consentChecked) {
-        const rt = Math.round(performance.now() - t0);
         this.jsPsych.finishTrial({
           trial_type: 'consent',
           participant_id: participantId,
           consent_given: false,
+          consent_submitted_at: consentSubmittedAt,
           rt,
         });
         return;
       }
-      const rt = Math.round(performance.now() - t0);
-      const data = {
+      this.jsPsych.finishTrial({
         trial_type: 'consent',
         participant_id: participantId,
         consent_given: true,
+        consent_submitted_at: consentSubmittedAt,
         rt,
-      };
-      this.jsPsych.finishTrial(data);
+      });
     });
   }
 }

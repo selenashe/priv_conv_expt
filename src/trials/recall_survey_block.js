@@ -148,6 +148,7 @@ class RecallSurveyBlockPlugin {
       </div>
     `;
     display_element.innerHTML = html;
+    const blockShownAt = Date.now();
 
     const continueBtn = display_element.querySelector('#recall-survey-continue');
     const errorEl = display_element.querySelector('#recall-survey-block-error');
@@ -174,6 +175,7 @@ class RecallSurveyBlockPlugin {
       }
       errorEl.classList.add('hidden');
       const rt = Math.round(performance.now() - t0);
+      const blockCompletedAt = Date.now();
       this.jsPsych.finishTrial({
         trial_type: 'recall_survey_block',
         scenario_id: trial.scenario_id,
@@ -182,6 +184,8 @@ class RecallSurveyBlockPlugin {
         violation_level: trial.violation_level,
         recalled_trial_id: trial.recalled_trial_id,
         survey_responses: responses,
+        block_shown_at: blockShownAt,
+        block_completed_at: blockCompletedAt,
         rt,
       });
     });

@@ -83,6 +83,7 @@ class ProfileLikertPlugin {
         profile_key: trial.profile_key,
         question: trial.question,
         response,
+        responded_at: Date.now(),
         rt,
       });
     };

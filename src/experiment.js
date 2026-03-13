@@ -257,9 +257,8 @@ const profileTimeline = shuffleArray([...PROFILE_QUESTIONS]).map((q, idx) => ({
 const endScreen = {
   type: htmlButtonResponse,
   stimulus: `
-    <p>Thank you for completing the study.</p>
+    <p>Your response has been saved. Thank you for participating.</p>
     <p>Your completion code: <strong>[TODO: Add your completion code, e.g. for Prolific]</strong></p>
-    <p>Your data has been downloaded (JSON and CSV). A copy has been saved in this browser for recovery.</p>
   `,
   choices: ['Finish'],
 };

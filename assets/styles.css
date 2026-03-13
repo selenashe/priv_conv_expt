@@ -615,6 +615,40 @@ body {
   margin-bottom: 20px;
 }
 
+.recall-survey-open-ended {
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+.recall-survey-open-ended label {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.recall-survey-additional-thoughts {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px 14px;
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  resize: vertical;
+  box-sizing: border-box;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.recall-survey-additional-thoughts:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+}
+
 .recall-survey-block-error {
   color: var(--text-muted);
   margin-top: 12px;

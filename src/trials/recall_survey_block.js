@@ -141,6 +141,10 @@ class RecallSurveyBlockPlugin {
           <h3 class="recall-survey-questions-title">Please answer the following questions about this task.</h3>
           ${surveyBlocks.join('')}
         </div>
+        <div class="recall-survey-open-ended">
+          <label for="recall-survey-additional-thoughts">Any additional thoughts you'd like to share? (optional)</label>
+          <textarea id="recall-survey-additional-thoughts" class="recall-survey-additional-thoughts" rows="4" placeholder="Your response is optional."></textarea>
+        </div>
         <div id="recall-survey-block-error" class="recall-survey-block-error hidden" role="alert"></div>
         <div class="recall-survey-actions">
           <button type="button" id="recall-survey-continue" class="jspsych-btn">Continue</button>
@@ -174,6 +178,8 @@ class RecallSurveyBlockPlugin {
         return;
       }
       errorEl.classList.add('hidden');
+      const additionalThoughtsEl = display_element.querySelector('#recall-survey-additional-thoughts');
+      const additional_thoughts = additionalThoughtsEl ? (additionalThoughtsEl.value || '').trim() : '';
       const rt = Math.round(performance.now() - t0);
       const blockCompletedAt = Date.now();
       this.jsPsych.finishTrial({
@@ -184,6 +190,7 @@ class RecallSurveyBlockPlugin {
         violation_level: trial.violation_level,
         recalled_trial_id: trial.recalled_trial_id,
         survey_responses: responses,
+        additional_thoughts: additional_thoughts || null,
         block_shown_at: blockShownAt,
         block_completed_at: blockCompletedAt,
         rt,

@@ -122,6 +122,7 @@ export function buildExportData(jsPsych, customData = {}) {
       block_shown_at: t.block_shown_at ?? null,
       block_completed_at: t.block_completed_at ?? null,
       survey_responses: t.survey_responses ?? [],
+      additional_thoughts: t.additional_thoughts ?? null,
     })),
     exit_survey: [
       ...exitTrials.map((t) => ({
@@ -260,17 +261,11 @@ export function submitToBackend(data, csv) {
 }
 
 /**
- * Export and download JSON + CSV, persist to localStorage, save to local results/ when under dev server, and submit to backend when URL is set.
+ * Export data: submit to backend (Apps Script) only. No local download, no localStorage copy.
  */
 export function exportAndPersist(jsPsych, customData = {}) {
   const data = buildExportData(jsPsych, customData);
-  saveToLocalStorage(data);
-  const json = JSON.stringify(data, null, 2);
   const csv = dataToCsvRows(data);
-  const pid = data.participant_id;
-  downloadFile(json, `privacy_norm_expt_${pid}.json`, 'application/json');
-  downloadFile(csv, `privacy_norm_expt_${pid}.csv`, 'text/csv;charset=utf-8');
-  saveToLocalDirectory(data, csv);
   submitToBackend(data, csv);
   return data;
 }

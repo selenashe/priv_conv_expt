@@ -20,7 +20,7 @@ function doPost(e) {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
-        'Timestamp', 'participant_id', 'condition', 'consent_given',
+        'Timestamp', 'participant_id', 'condition', 'order', 'consent_given',
         'profile_trials_json', 'chat_trials_json', 'exit_survey_json', 'exit_survey_blocks_json', 'raw_json'
       ]);
     }
@@ -28,6 +28,7 @@ function doPost(e) {
       new Date(),
       data.participant_id || '',
       data.condition || '',
+      data.assigned_order || '',
       data.consent && data.consent.consent_given !== undefined ? data.consent.consent_given : '',
       JSON.stringify(data.profile_trials || []),
       JSON.stringify(data.chat_trials || []),

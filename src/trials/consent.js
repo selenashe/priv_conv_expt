@@ -2,9 +2,11 @@
  * Consent + basic info trial.
  * Collects: Prolific ID (required), consent checkbox.
  * If consent not checked, shows polite exit message and does not proceed.
+ * On consent, assigns counterbalanced scenario order (A–F) for main trials.
  */
 
 import { ParameterType } from 'jspsych';
+import { getOrAssignOrder } from '../utils/data.js';
 
 const info = {
   name: 'consent',
@@ -128,11 +130,13 @@ class ConsentPlugin {
         });
         return;
       }
+      const assigned_order = getOrAssignOrder();
       this.jsPsych.finishTrial({
         trial_type: 'consent',
         participant_id: participantId,
         consent_given: true,
         consent_submitted_at: consentSubmittedAt,
+        assigned_order,
         rt,
       });
     });

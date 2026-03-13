@@ -11,10 +11,11 @@ import ProfileLikertPlugin from './trials/profile.js';
 import ChatTrialPlugin from './trials/chat_trial.js';
 import RecallSurveyBlockPlugin from './trials/recall_survey_block.js';
 import ExitSurveyLoaderPlugin from './trials/exit_survey_loader.js';
-import { scenarios, ATTENTION_CHECK_EVERY_N_TRIALS } from './config/scenarios.js';
+import { scenarios } from './config/scenarios.js';
 import {
   getOrCreateParticipantId,
   assignCondition,
+  getAssignedOrder,
   exportAndPersist,
 } from './utils/data.js';
 import '../assets/styles.css';
@@ -103,41 +104,39 @@ const EXIT_SURVEY_QUESTIONS = [
 ];
 
 // ---------------------------------------------------------------------------
-// Build main trial timeline: randomize order, interleave attention checks.
+// Counterbalanced orders A–F: which variant (a,b,c) of each scenario family is shown, and in what order.
+// Order table: scenario_1..5 = health, legal, education, finance, public.
+// ---------------------------------------------------------------------------
+const ORDER_SCENARIOS = {
+  A: ['test_health_01_a', 'test_legal_01_b', 'test_education_01_c', 'test_finance_01_a', 'test_public_01_b'],
+  B: ['test_health_01_b', 'test_legal_01_c', 'test_education_01_a', 'test_finance_01_b', 'test_public_01_c'],
+  C: ['test_health_01_c', 'test_legal_01_a', 'test_education_01_b', 'test_finance_01_c', 'test_public_01_a'],
+  D: ['test_health_01_a', 'test_legal_01_c', 'test_education_01_b', 'test_finance_01_a', 'test_public_01_c'],
+  E: ['test_health_01_b', 'test_legal_01_a', 'test_education_01_c', 'test_finance_01_b', 'test_public_01_a'],
+  F: ['test_health_01_c', 'test_legal_01_b', 'test_education_01_a', 'test_finance_01_c', 'test_public_01_b'],
+};
+
+// ---------------------------------------------------------------------------
+// Build main trial timeline: 5 scenarios in counterbalanced order (assigned when consent given).
 // ---------------------------------------------------------------------------
 function buildMainTrials(condition) {
-  const attentionChecks = scenarios.filter((s) => s.attention_check);
-  const mainScenarios = scenarios.filter((s) => !s.attention_check);
-  const shuffled = shuffleArray(mainScenarios);
-  const trials = [];
-  let attnIndex = 0;
-  for (let i = 0; i < shuffled.length; i++) {
-    trials.push({
-      scenario_id: shuffled[i].scenario_id,
-      domain: shuffled[i].domain,
-      recipient: shuffled[i].recipient,
+  const order = getAssignedOrder() || 'A';
+  const scenarioIds = ORDER_SCENARIOS[order] || ORDER_SCENARIOS.A;
+  const trials = scenarioIds.map((id) => {
+    const s = scenarios.find((sc) => sc.scenario_id === id);
+    if (!s) return null;
+    return {
+      scenario_id: s.scenario_id,
+      domain: s.domain,
+      recipient: s.recipient,
       condition,
-      task: shuffled[i].task_prompt,
-      chat_context: shuffled[i].chat_context,
-      compose_template: shuffled[i].compose_template,
-      ai_draft: shuffled[i].ai_draft,
-      attention_check: false,
-    });
-    if ((i + 1) % ATTENTION_CHECK_EVERY_N_TRIALS === 0 && attnIndex < attentionChecks.length) {
-      const ac = attentionChecks[attnIndex++];
-      trials.push({
-        scenario_id: ac.scenario_id,
-        domain: ac.domain,
-        recipient: ac.recipient,
-        condition,
-        task: ac.task_prompt,
-        chat_context: ac.chat_context,
-        compose_template: ac.compose_template,
-        ai_draft: ac.ai_draft,
-        attention_check: true,
-      });
-    }
-  }
+      task: s.task_prompt,
+      chat_context: s.chat_context,
+      compose_template: s.compose_template,
+      ai_draft: s.ai_draft,
+      attention_check: s.attention_check ?? false,
+    };
+  }).filter(Boolean);
   const totalTrials = trials.length;
   trials.forEach((t, idx) => {
     t.trial_number = idx + 1;
@@ -308,6 +307,7 @@ const exitSurveyLoaderTrial = {
 };
 
 const condition = assignCondition(getOrCreateParticipantId());
+// timeline_variables use a getter so they are evaluated when main trials run (after consent), when assigned_order is set
 const mainTrials = {
   timeline: [
     {
@@ -325,7 +325,9 @@ const mainTrials = {
       total_trials: () => jsPsych.timelineVariable('total_trials'),
     },
   ],
-  timeline_variables: buildMainTrials(condition),
+  get timeline_variables() {
+    return buildMainTrials(condition);
+  },
   randomize_order: false,
 };
 

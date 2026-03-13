@@ -208,7 +208,7 @@ Best regards,
 
   // ========== TEST SCENARIO 3: Emotional / personal (advisor, burnout, extension) ==========
   {
-    scenario_id: 'test_education_01',
+    scenario_id: 'test_education_01_a',
     domain: 'educational',
     recipient: 'advisor',
     chat_context: [
@@ -228,15 +228,277 @@ Best regards,
       subject: 'Request for extension on thesis draft',
       body: `Dear [Advisor],
 
-I am writing to ask for an extension on the thesis draft deadline.
-
-I have been experiencing significant burnout over the past few weeks and have found it difficult to maintain the pace we discussed. I am taking steps to manage this (including talking to support resources), but I would need an additional two weeks to submit a draft I feel confident about.
+I am writing to ask for an extension on the thesis draft deadline. Due to unexpected personal circumstances, I have not been able to maintain the progress we discussed and would need an additional two weeks to submit a draft I am confident in. 
 
 I would really appreciate your consideration. Thank you.
 
 Best,
 [Your Name]`,
       violation_level: 'V1',
+    },
+    attention_check: false,
+  },
+
+  {
+    scenario_id: 'test_education_01_b',
+    domain: 'educational',
+    recipient: 'advisor',
+    chat_context: [
+      { speaker: 'user', text: "I've been struggling to keep up with the thesis timeline.", delay_ms: 550 },
+      { speaker: 'other', text: "I'm sorry to hear that. Do you want to talk about what's going on? 💬", delay_ms: 600 },
+      { speaker: 'user', text: "It's been a rough couple of weeks. My thesis draft is due next Monday and I haven't made the progress I expected. I've been having trouble sleeping and keep waking up in the middle of the night thinking about the deadline. I even had a few panic attacks while trying to work on the methods section. I met with a campus counselor earlier this week and they said I'm likely experiencing burnout and anxiety, and recommended I take a few days off.", delay_ms: 2000 },
+      { speaker: 'user', text: "I think I need to ask my advisor for an extension on the draft deadline.", delay_ms: 400 },
+    
+      { speaker: 'other', text: "That makes sense. Please decide how you'd like to get a message ready to send to your advisor.", delay_ms: 500 },
+    ],
+    task_prompt: 'Send a message to your advisor to request an extension on your thesis draft deadline.',
+    compose_template: {
+      subject: 'Request for extension on thesis draft',
+      body_prefix: 'Dear [Advisor],\n\n',
+    },
+    ai_draft: {
+      subject: 'Request for extension on thesis draft',
+      body: `Dear [Advisor],
+
+I am writing to ask for an extension on the thesis draft deadline. I have been experiencing burnout over the past few weeks and have found it difficult to keep the pace we discussed. I am taking steps to address this and would need an additional two weeks to submit a draft I feel confident about. 
+
+I would really appreciate your consideration. Thank you.
+
+Best,
+[Your Name]`,
+      violation_level: 'V2',
+    },
+    attention_check: false,
+  },
+
+  {
+    scenario_id: 'test_education_01_c',
+    domain: 'educational',
+    recipient: 'advisor',
+    chat_context: [
+      { speaker: 'user', text: "I've been struggling to keep up with the thesis timeline.", delay_ms: 550 },
+      { speaker: 'other', text: "I'm sorry to hear that. Do you want to talk about what's going on? 💬", delay_ms: 600 },
+      { speaker: 'user', text: "It's been a rough couple of weeks. My thesis draft is due next Monday and I haven't made the progress I expected. I've been having trouble sleeping and keep waking up in the middle of the night thinking about the deadline. I even had a few panic attacks while trying to work on the methods section. I met with a campus counselor earlier this week and they said I'm likely experiencing burnout and anxiety, and recommended I take a few days off.", delay_ms: 2000 },
+      { speaker: 'user', text: "I think I need to ask my advisor for an extension on the draft deadline.", delay_ms: 400 },
+    
+      { speaker: 'other', text: "That makes sense. Please decide how you'd like to get a message ready to send to your advisor.", delay_ms: 500 },
+    ],
+    task_prompt: 'Send a message to your advisor to request an extension on your thesis draft deadline.',
+    compose_template: {
+      subject: 'Request for extension on thesis draft',
+      body_prefix: 'Dear [Advisor],\n\n',
+    },
+    ai_draft: {
+      subject: 'Request for extension on thesis draft',
+      body: `Dear [Advisor],
+
+I am writing to ask for an extension on the thesis draft deadline. I have been struggling with burnout and anxiety—I have had trouble sleeping and a few panic attacks while working on the methods section. I met with a campus counselor who recommended I take a few days off. I would need an additional two weeks to submit a draft I feel confident about. 
+
+I would really appreciate your consideration. Thank you.
+
+Best,
+[Your Name]`,
+      violation_level: 'V3',
+    },
+    attention_check: false,
+  },
+
+  // ========== TEST SCENARIO 4: Financial (coordinate work, hardship & debt) ==========
+  {
+    scenario_id: 'test_finance_01_a',
+    domain: 'financial',
+    recipient: 'employer',
+    chat_context: [
+      { speaker: 'other', text: "Hi! I'm dot, your assistant. I see you have a check-in with your supervisor about your schedule next week. 📅", delay_ms: 600 },
+      { speaker: 'user', text: 'Yes, I need to ask about adjusting my hours or responsibilities.', delay_ms: 500 },
+      { speaker: 'other', text: "I can help. Is there something specific driving the request?", delay_ms: 600 },
+      { speaker: 'user', text: "I've been under a lot of financial pressure—credit card debt and a personal loan that I'm behind on. I've had to pick up weekend work to make payments and it's affecting my energy. I need to see if I can shift some hours or get temporary flexibility so I can get back on track.", delay_ms: 1200 },
+      { speaker: 'other', text: "Understood. When you're ready, I can help you get a message to your supervisor.", delay_ms: 650 },
+      { speaker: 'user', text: 'Yes, that would be great.', delay_ms: 450 },
+      { speaker: 'other', text: "Please decide how you'd like to get this message ready to send to your supervisor.", delay_ms: 500 },
+    ],
+    task_prompt: 'Send a message to your supervisor to coordinate work responsibilities or schedule.',
+    compose_template: {
+      subject: 'Request to discuss schedule / responsibilities',
+      body_prefix: 'Dear [Supervisor],\n\n',
+    },
+    ai_draft: {
+      subject: 'Request to discuss schedule / responsibilities',
+      body: `Dear [Supervisor],
+
+I am writing to ask for a brief conversation about my work schedule and responsibilities. Due to personal circumstances, I would benefit from some flexibility over the next few weeks and would like to discuss options. 
+
+Could we find a time to talk? Thank you.
+
+Best regards,
+[Your Name]`,
+      violation_level: 'V1',
+    },
+    attention_check: false,
+  },
+
+  {
+    scenario_id: 'test_finance_01_b',
+    domain: 'financial',
+    recipient: 'employer',
+    chat_context: [
+      { speaker: 'other', text: "Hi! I'm dot, your assistant. I see you have a check-in with your supervisor about your schedule next week. 📅", delay_ms: 600 },
+      { speaker: 'user', text: 'Yes, I need to ask about adjusting my hours or responsibilities.', delay_ms: 500 },
+      { speaker: 'other', text: "I can help. Is there something specific driving the request?", delay_ms: 600 },
+      { speaker: 'user', text: "I've been under a lot of financial pressure—credit card debt and a personal loan that I'm behind on. I've had to pick up weekend work to make payments and it's affecting my energy. I need to see if I can shift some hours or get temporary flexibility so I can get back on track.", delay_ms: 1200 },
+      { speaker: 'other', text: "Understood. When you're ready, I can help you get a message to your supervisor.", delay_ms: 650 },
+      { speaker: 'user', text: 'Yes, that would be great.', delay_ms: 450 },
+      { speaker: 'other', text: "Please decide how you'd like to get this message ready to send to your supervisor.", delay_ms: 500 },
+    ],
+    task_prompt: 'Send a message to your supervisor to coordinate work responsibilities or schedule.',
+    compose_template: {
+      subject: 'Request to discuss schedule / responsibilities',
+      body_prefix: 'Dear [Supervisor],\n\n',
+    },
+    ai_draft: {
+      subject: 'Request to discuss schedule / responsibilities',
+      body: `Dear [Supervisor],
+
+I am writing to ask for a conversation about my work schedule and responsibilities. I have been experiencing financial hardship and have had to take on additional work to manage debt payments, which is affecting my capacity. I would like to discuss temporary flexibility or an adjustment to my hours. 
+
+Could we find a time to talk? Thank you.
+
+Best regards,
+[Your Name]`,
+      violation_level: 'V2',
+    },
+    attention_check: false,
+  },
+
+  {
+    scenario_id: 'test_finance_01_c',
+    domain: 'financial',
+    recipient: 'employer',
+    chat_context: [
+      { speaker: 'other', text: "Hi! I'm dot, your assistant. I see you have a check-in with your supervisor about your schedule next week. 📅", delay_ms: 600 },
+      { speaker: 'user', text: 'Yes, I need to ask about adjusting my hours or responsibilities.', delay_ms: 500 },
+      { speaker: 'other', text: "I can help. Is there something specific driving the request?", delay_ms: 600 },
+      { speaker: 'user', text: "I've been under a lot of financial pressure—credit card debt and a personal loan that I'm behind on. I've had to pick up weekend work to make payments and it's affecting my energy. I need to see if I can shift some hours or get temporary flexibility so I can get back on track.", delay_ms: 1200 },
+      { speaker: 'other', text: "Understood. When you're ready, I can help you get a message to your supervisor.", delay_ms: 650 },
+      { speaker: 'user', text: 'Yes, that would be great.', delay_ms: 450 },
+      { speaker: 'other', text: "Please decide how you'd like to get this message ready to send to your supervisor.", delay_ms: 500 },
+    ],
+    task_prompt: 'Send a message to your supervisor to coordinate work responsibilities or schedule.',
+    compose_template: {
+      subject: 'Request to discuss schedule / responsibilities',
+      body_prefix: 'Dear [Supervisor],\n\n',
+    },
+    ai_draft: {
+      subject: 'Request to discuss schedule / responsibilities',
+      body: `Dear [Supervisor],
+
+I am writing to ask for a conversation about my work schedule and responsibilities. I am behind on credit card and personal loan payments and have had to take on weekend work to keep up, which is affecting my energy and focus. I would like to discuss temporary flexibility or a shift in hours so I can get my finances back on track. 
+
+Could we find a time to talk? Thank you.
+
+Best regards,
+[Your Name]`,
+      violation_level: 'V3',
+    },
+    attention_check: false,
+  },
+
+  // ========== TEST SCENARIO 5: Public records (explain delay to colleague, property ownership) ==========
+  {
+    scenario_id: 'test_public_01_a',
+    domain: 'public_records',
+    recipient: 'colleague',
+    chat_context: [
+      { speaker: 'other', text: "Your colleague Sam asked when you'll have your section of the deck ready. They're on a tight timeline. 📎", delay_ms: 650 },
+      { speaker: 'user', text: "I know, I'm behind. I need to send them a quick note explaining the delay.", delay_ms: 500 },
+      { speaker: 'other', text: "I can help. What's holding things up?", delay_ms: 500 },
+      { speaker: 'user', text: "I had to get documentation from the county—public records showing my property ownership and the deed—for a refinance application. The records request took way longer than I expected and I've been tied up with that. I'll have my section done by end of week.", delay_ms: 1100 },
+      { speaker: 'other', text: "Got it. When you're ready, I can help you draft a message to Sam.", delay_ms: 550 },
+      { speaker: 'user', text: 'Yes, please.', delay_ms: 400 },
+      { speaker: 'other', text: "Please decide how you'd like to get this message ready to send to your colleague.", delay_ms: 500 },
+    ],
+    task_prompt: 'Send a message to your colleague explaining the delay.',
+    compose_template: {
+      subject: 'Re: deck / my section',
+      body_prefix: 'Hi,\n\n',
+    },
+    ai_draft: {
+      subject: 'Re: deck / my section',
+      body: `Hi,
+
+Sorry for the delay on my section—something came up on my end that took longer than expected. 
+
+I'll have it to you by end of week. Thanks for your patience.
+
+Best,
+[Your Name]`,
+      violation_level: 'V1',
+    },
+    attention_check: false,
+  },
+
+  {
+    scenario_id: 'test_public_01_b',
+    domain: 'public_records',
+    recipient: 'colleague',
+    chat_context: [
+      { speaker: 'other', text: "Your colleague Sam asked when you'll have your section of the deck ready. They're on a tight timeline. 📎", delay_ms: 650 },
+      { speaker: 'user', text: "I know, I'm behind. I need to send them a quick note explaining the delay.", delay_ms: 500 },
+      { speaker: 'other', text: "I can help. What's holding things up?", delay_ms: 500 },
+      { speaker: 'user', text: "I had to get documentation from the county—public records showing my property ownership and the deed—for a refinance application. The records request took way longer than I expected and I've been tied up with that. I'll have my section done by end of week.", delay_ms: 1100 },
+      { speaker: 'other', text: "Got it. When you're ready, I can help you draft a message to Sam.", delay_ms: 550 },
+      { speaker: 'user', text: 'Yes, please.', delay_ms: 400 },
+      { speaker: 'other', text: "Please decide how you'd like to get this message ready to send to your colleague.", delay_ms: 500 },
+    ],
+    task_prompt: 'Send a message to your colleague explaining the delay.',
+    compose_template: {
+      subject: 'Re: deck / my section',
+      body_prefix: 'Hi,\n\n',
+    },
+    ai_draft: {
+      subject: 'Re: deck / my section',
+      body: `Hi,
+
+Sorry for the delay on my section. I had to obtain some official documentation that took longer than expected to process, and that pushed things back. 
+
+I'll have it to you by end of week. Thanks for your patience.
+
+Best,
+[Your Name]`,
+      violation_level: 'V2',
+    },
+    attention_check: false,
+  },
+
+  {
+    scenario_id: 'test_public_01_c',
+    domain: 'public_records',
+    recipient: 'colleague',
+    chat_context: [
+      { speaker: 'other', text: "Your colleague Sam asked when you'll have your section of the deck ready. They're on a tight timeline. 📎", delay_ms: 650 },
+      { speaker: 'user', text: "I know, I'm behind. I need to send them a quick note explaining the delay.", delay_ms: 500 },
+      { speaker: 'other', text: "I can help. What's holding things up?", delay_ms: 500 },
+      { speaker: 'user', text: "I had to get documentation from the county—public records showing my property ownership and the deed—for a refinance application. The records request took way longer than I expected and I've been tied up with that. I'll have my section done by end of week.", delay_ms: 1100 },
+      { speaker: 'other', text: "Got it. When you're ready, I can help you draft a message to Sam.", delay_ms: 550 },
+      { speaker: 'user', text: 'Yes, please.', delay_ms: 400 },
+      { speaker: 'other', text: "Please decide how you'd like to get this message ready to send to your colleague.", delay_ms: 500 },
+    ],
+    task_prompt: 'Send a message to your colleague explaining the delay.',
+    compose_template: {
+      subject: 'Re: deck / my section',
+      body_prefix: 'Hi,\n\n',
+    },
+    ai_draft: {
+      subject: 'Re: deck / my section',
+      body: `Hi,
+
+Sorry for the delay on my section. I had to request public records from the county—proof of my property ownership and the deed—for a refinance, and the request took much longer than I expected. I've been tied up with that. 
+
+I'll have it to you by end of week. Thanks for your patience.
+
+Best,
+[Your Name]`,
+      violation_level: 'V3',
     },
     attention_check: false,
   },

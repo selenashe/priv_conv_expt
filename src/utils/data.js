@@ -6,6 +6,33 @@
 const PARTICIPANT_STORAGE_KEY_PREFIX = 'privacy_norm_expt_';
 const CONDITION_LABELS = ['A', 'B'];
 
+/** Keys for counterbalanced scenario order (A–F). First consent = A, second = B, etc. */
+const ORDER_COUNTER_KEY = 'privacy_norm_expt_order_counter';
+const ASSIGNED_ORDER_KEY = 'privacy_norm_expt_assigned_order';
+const ORDER_LABELS = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+/**
+ * Assign the next counterbalanced order (A–F) when consent is given. Persists order for this
+ * participant and increments the counter for the next. Call only once per consent (when consent_given is true).
+ * @returns {string} Order label 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
+ */
+export function getOrAssignOrder() {
+  const raw = localStorage.getItem(ORDER_COUNTER_KEY);
+  const counter = raw != null ? parseInt(raw, 10) : 0;
+  const order = ORDER_LABELS[counter % ORDER_LABELS.length];
+  localStorage.setItem(ASSIGNED_ORDER_KEY, order);
+  localStorage.setItem(ORDER_COUNTER_KEY, String(counter + 1));
+  return order;
+}
+
+/**
+ * Read the assigned order for the current participant (set when consent was given). Used by buildMainTrials.
+ * @returns {string | null} 'A' | 'B' | ... | 'F' or null if not yet assigned
+ */
+export function getAssignedOrder() {
+  return localStorage.getItem(ASSIGNED_ORDER_KEY);
+}
+
 /**
  * Generate or retrieve participant_id. In production you might pass via URL.
  */
@@ -50,6 +77,7 @@ export function buildExportData(jsPsych, customData = {}) {
   const data = {
     participant_id: participantId,
     condition,
+    assigned_order: consent.assigned_order ?? getAssignedOrder() ?? null,
     consent: {
       age: consent.age,
       gender: consent.gender,
@@ -137,6 +165,7 @@ export function dataToCsvRows(data) {
   const header = [
     'participant_id',
     'condition',
+    'assigned_order',
     'age',
     'gender',
     'prolific_id',
@@ -159,6 +188,7 @@ export function dataToCsvRows(data) {
   const r = [
     data.participant_id,
     data.condition,
+    data.assigned_order ?? '',
     data.consent?.age ?? '',
     data.consent?.gender ?? '',
     data.consent?.prolific_id ?? '',

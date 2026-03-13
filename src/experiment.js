@@ -29,19 +29,30 @@ function shuffleArray(arr) {
 }
 
 // ---------------------------------------------------------------------------
-// Profile questions (1–7 Likert). TODO: Replace with your actual questions.
-// profile_key used for score aggregation: medical_score, legal_score, emotional_score, recipient_trust_score.
+// Profile questions (1–7 Likert). From stimuli/profiling.csv stimulus_non_garden_path column.
+// profile_key = domain for grouping (healthcare_information, law_enforcement_records, etc.).
 // ---------------------------------------------------------------------------
 const PROFILE_QUESTIONS = [
-  { profile_key: 'medical', question: 'How acceptable is it to tell your course instructor that you had a medical appointment to explain a scheduling conflict?' },
-  { profile_key: 'medical', question: 'How acceptable is it to tell your workplace supervisor the type of medical procedure you had to coordinate scheduling?' },
-  // { profile_key: 'legal', question: 'I am comfortable sharing personal information in legal or official contexts when required.' },
-  // { profile_key: 'legal', question: 'I am comfortable disclosing relevant personal details to authorities or legal representatives.' },
-  // { profile_key: 'emotional', question: 'I am comfortable sharing emotional or mental health related information with people I trust.' },
-  // { profile_key: 'emotional', question: 'I am comfortable discussing my wellbeing in contexts where it is relevant (e.g. support services).' },
-  // { profile_key: 'recipient_trust', question: 'I would be comfortable sharing sensitive personal information with course staff if needed.' },
-  // { profile_key: 'recipient_trust', question: 'I would be comfortable sharing sensitive personal information with my employer if required.' },
-  // { profile_key: 'recipient_trust', question: 'I would be comfortable sharing sensitive personal information with a close friend.' },
+  { profile_key: 'healthcare_information', question: 'How acceptable is it to tell your course instructor that you had a medical appointment to explain a scheduling conflict?' },
+  { profile_key: 'healthcare_information', question: 'How acceptable is it to tell your workplace supervisor the type of medical procedure you had to coordinate scheduling?' },
+  { profile_key: 'healthcare_information', question: 'How acceptable is it to tell administrative staff specific medical details from a doctor\'s note to request accommodations?' },
+  { profile_key: 'healthcare_information', question: 'How acceptable is it to tell a colleague about your stress about a recent medical procedure to ask for advice about handling work responsibilities?' },
+  { profile_key: 'law_enforcement_records', question: 'How acceptable is it to tell your course instructor that you have a court appointment to explain missing a deadline?' },
+  { profile_key: 'law_enforcement_records', question: 'How acceptable is it to tell your workplace supervisor that you are involved in a legal case to coordinate work responsibilities?' },
+  { profile_key: 'law_enforcement_records', question: 'How acceptable is it to tell administrative staff details of a legal citation to request assistance?' },
+  { profile_key: 'law_enforcement_records', question: 'How acceptable is it to tell a colleague about your worries about an ongoing legal issue to ask for advice about managing a work situation?' },
+  { profile_key: 'financial_information', question: 'How acceptable is it to tell your course instructor that you had a financial appointment with a bank to explain a delay?' },
+  { profile_key: 'financial_information', question: 'How acceptable is it to tell your workplace supervisor that you are experiencing financial hardship to coordinate work responsibilities?' },
+  { profile_key: 'financial_information', question: 'How acceptable is it to tell administrative staff details about personal debt to request accommodations?' },
+  { profile_key: 'financial_information', question: 'How acceptable is it to tell a colleague about your stress about financial problems to ask for advice about handling workplace responsibilities?' },
+  { profile_key: 'education_records', question: 'How acceptable is it to tell your course instructor that you had an academic advising appointment to explain a scheduling conflict?' },
+  { profile_key: 'education_records', question: 'How acceptable is it to tell your workplace supervisor information about your recent exam performance to coordinate work responsibilities?' },
+  { profile_key: 'education_records', question: 'How acceptable is it to tell administrative staff a detailed explanation of failing a course to request accommodations?' },
+  { profile_key: 'education_records', question: 'How acceptable is it to tell a colleague about your anxiety about academic performance to ask for advice about managing work and academic responsibilities?' },
+  { profile_key: 'public_records', question: 'How acceptable is it to tell your course instructor your address listed in public records to explain a delay?' },
+  { profile_key: 'public_records', question: 'How acceptable is it to tell your workplace supervisor about a public record of property ownership to coordinate scheduling?' },
+  { profile_key: 'public_records', question: 'How acceptable is it to tell administrative staff details from a public legal filing about you to provide documentation when requesting accommodations?' },
+  { profile_key: 'public_records', question: 'How acceptable is it to tell a colleague about your frustration about information about you being publicly available to ask for advice about handling a workplace situation?' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -234,11 +245,13 @@ const instructionBeforeRecall = {
   css_classes: ['info-page-trial'],
 };
 
-// Profile: one question per page
-const profileTimeline = PROFILE_QUESTIONS.map((q) => ({
+// Profile: one question per page (with progress bar); order randomized per participant
+const profileTimeline = shuffleArray([...PROFILE_QUESTIONS]).map((q, idx) => ({
   type: ProfileLikertPlugin,
   profile_key: q.profile_key,
   question: q.question,
+  trial_number: idx + 1,
+  total_trials: PROFILE_QUESTIONS.length,
 }));
 
 // End screen (included in dynamically built timeline so it runs after exit survey)

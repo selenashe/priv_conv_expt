@@ -36,6 +36,10 @@ const info = {
       type: ParameterType.INT,
       default: 7,
     },
+    /** Current question index (1-based) for progress bar. */
+    trial_number: { type: ParameterType.INT, default: null },
+    /** Total number of profile questions for progress bar. */
+    total_trials: { type: ParameterType.INT, default: null },
   },
 };
 
@@ -53,7 +57,21 @@ class ProfileLikertPlugin {
       (v) =>
         `<label class="likert-option"><input type="radio" name="${name}" value="${v}" /> <span>${v}</span></label>`
     );
+    const trialNumber = trial.trial_number ?? 1;
+    const totalTrials = trial.total_trials ?? 1;
+    const progressPct = totalTrials > 0 ? (trialNumber / totalTrials) * 100 : 0;
+    const progressBarHtml =
+      totalTrials > 0
+        ? `
+      <div class="profile-progress" role="progressbar" aria-valuenow="${trialNumber}" aria-valuemin="1" aria-valuemax="${totalTrials}" aria-label="Question ${trialNumber} of ${totalTrials}">
+        <span class="profile-progress-text">Question ${trialNumber} of ${totalTrials}</span>
+        <div class="profile-progress-bar">
+          <div class="profile-progress-fill" style="width: ${progressPct}%"></div>
+        </div>
+      </div>`
+        : '';
     const html = `
+      ${progressBarHtml}
       <div class="profile-question-block">
         <p class="profile-question">${trial.question}</p>
         <div class="likert-labels">

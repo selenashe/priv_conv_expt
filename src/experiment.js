@@ -234,7 +234,7 @@ const instructionBeforeRecall = {
   stimulus: `
     <div class="info-page">
       <h2>Reflection on your tasks</h2>
-      <p>You are now entering the final part of the study. We will show you <strong>two of the tasks you just completed</strong> and ask you to reflect on them.</p>
+      <p>You are now entering the final part of the study. We will show you <strong>the tasks you just completed</strong> and ask you to reflect on each one.</p>
       <p>For each task, you will briefly see the chat context and the message you submitted, then answer a few short questions about that scenario.</p>
       <p><strong>Estimated time: about 5 minutes.</strong></p>
       <p>Click Continue when you are ready.</p>
@@ -272,12 +272,10 @@ function buildExitSurveyCallback() {
     const coreTrials = chatTrials.filter(
       (t) => !t.attention_check && t.scenario_id != null && t.choice != null
     );
-    const n = Math.min(2, coreTrials.length);
     const timeline = [];
-    if (n > 0) {
+    if (coreTrials.length > 0) {
       timeline.push(instructionBeforeRecall);
-      const selected = jsPsychInstance.randomization.sampleWithoutReplacement(coreTrials, n);
-      selected.forEach((trialData) => {
+      coreTrials.forEach((trialData) => {
         const scenario = scenarios.find((s) => s.scenario_id === trialData.scenario_id);
         const chat_context = scenario ? scenario.chat_context || [] : [];
         timeline.push({

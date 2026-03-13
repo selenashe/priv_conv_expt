@@ -1,5 +1,5 @@
 /**
- * Exit survey loader: selects two random completed (core) chat trials,
+ * Exit survey loader: includes all completed (core) chat trials in presentation order,
  * then injects a timeline of recall + exit survey questions for each.
  * Uses jsPsych.data.get() and jsPsych.addNodeToEndOfTimeline().
  */
